@@ -14,6 +14,6 @@ export default function Home() {
       <article><b>02 / SEO workspace</b><h3>Organize your growth</h3><p>Keep track of your website and local SEO tasks from your dashboard.</p></article>
       <article><b>03 / Integrations</b><h3>Connect with permission</h3><p>Prepare for supported Google and other platform connections. No false ranking promises.</p></article>
     </section>
-    <footer>© {new Date().getFullYear()} GenZ SEO · Built to help businesses grow online.</footer>
+    <footer>© {new Date().getFullYear()} GenZ SEO · Built to help businesses grow online. <Link href="/privacy">Privacy</Link></footer>
   </main>;
 }

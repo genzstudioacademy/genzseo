@@ -21,13 +21,20 @@ SEO scanning, Google Business Profile publishing, directory submissions, review 
 3. In Supabase Authentication → URL Configuration, set the Site URL and allow the app callback URLs, including `http://localhost:3000/dashboard` and `http://127.0.0.1:3000/dashboard` for local testing and your production dashboard URL.
 4. Google sign-in is available on both `/signup` and `/login`. The Google provider must be enabled in Supabase before the buttons can complete sign-in.
 
+## Owner analytics
+- The owner-only `/dashboard/admin` page lists registered account names, emails, registration times and last sign-ins, plus aggregate page-view counts.
+- Anonymous analytics records only each page path and timestamp; it does not identify visitors. Page views are not unique people.
+- Run the full `supabase/schema.sql` in Supabase SQL Editor to create the account data tables and anonymous page-view table.
+- Set `NEXT_PUBLIC_ADMIN_EMAIL` for the navigation link, `ADMIN_EMAILS` for the server-side access check, and `SUPABASE_SECRET_KEY` as a server-only environment variable. Never prefix the secret key with `NEXT_PUBLIC_` or commit it.
+- The admin page requires the signed-in email to match an address in `ADMIN_EMAILS`. The server validates the session and uses the secret key only in the API route.
+
 ## 2. Run locally
 Install Node.js 20 or newer. In this folder:
 ```bash
 npm install
 cp .env.example .env.local
 ```
-Edit `.env.local` with `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from Supabase, then:
+Edit `.env.local` with `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `NEXT_PUBLIC_ADMIN_EMAIL` from your setup. Add `ADMIN_EMAILS` and a newly rotated `SUPABASE_SECRET_KEY` locally for the owner analytics page, then:
 ```bash
 npm run dev
 ```
@@ -36,7 +43,7 @@ Open http://localhost:3000
 ## 3. Publish online
 1. Push this project to a private GitHub repository.
 2. Import it into Vercel (https://vercel.com/).
-3. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in Vercel project environment variables.
+3. Add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_ADMIN_EMAIL`, `ADMIN_EMAILS`, and `SUPABASE_SECRET_KEY` in Vercel project environment variables. Keep `SUPABASE_SECRET_KEY` server-only.
 4. Deploy, then add your domain in Vercel and add that domain to Supabase Auth URL Configuration.
 
 ## Security notes

@@ -62,3 +62,20 @@ create policy "Users can update own generated site" on public.generated_sites
 drop policy if exists "Users can delete own generated site" on public.generated_sites;
 create policy "Users can delete own generated site" on public.generated_sites
   for delete using (auth.uid() = user_id);
+
+
+-- Anonymous page-view aggregates. This intentionally stores no visitor identity.
+create table if not exists public.site_pageviews (
+  id uuid primary key default gen_random_uuid(),
+  page_path text not null check (page_path ~ '^/[A-Za-z0-9/_-]{0,255}$'),
+  created_at timestamptz not null default now()
+);
+alter table public.site_pageviews enable row level security;
+revoke all on public.site_pageviews from anon, authenticated;
+grant insert on public.site_pageviews to anon, authenticated;
+drop policy if exists "Anyone can record page views" on public.site_pageviews;
+create policy "Anyone can record page views" on public.site_pageviews
+  for insert to anon, authenticated
+  with check (page_path ~ '^/[A-Za-z0-9/_-]{0,255}$');
+
+notify pgrst, 'reload schema';
